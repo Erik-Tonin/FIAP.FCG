@@ -16,7 +16,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.1" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
@@ -24,6 +26,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FIAP.FCG.Application\FIAP.FCG.Application.csproj" />
+    <ProjectReference Include="..\FIAP.FCG.Crosscutting\FIAP.FCG.Crosscutting.csproj" />
+    <ProjectReference Include="..\FIAP.FCG.Infra\FIAP.FCG.Infra.csproj" />
   </ItemGroup>
 
 </Project>
