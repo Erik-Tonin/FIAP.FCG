@@ -4,5 +4,6 @@ namespace FIAP.FCG.Application.Contracts.IRepositories
 {
     public interface IUserProfileRepository : IRepositoryBase<UserProfile>
     {
+        Task<UserProfile> GetByEmail(string email);
     }
 }
