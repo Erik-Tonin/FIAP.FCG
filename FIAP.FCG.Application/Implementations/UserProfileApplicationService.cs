@@ -17,7 +17,7 @@ namespace FIAP.FCG.Application.Implementations
 
         public async Task<ValidationResultDTO<UserProfile>> Register(UserProfileDTO userProfileDTO)
         {
-            UserProfile user = await GetByEmail(userProfileDTO.Email);
+            UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
             if (user != null)            
                 AddValidationError("Usuário já cadastrado.", "Já existe um usuário cadastrado com o mesmo e-mail.");
@@ -32,9 +32,9 @@ namespace FIAP.FCG.Application.Implementations
             string hashedConfirmPassword = PasswordHasher.HashPassword(userProfileDTO.ConfirmPassword);
 
             user = new UserProfile(
-                userProfileDTO.Name,
-                userProfileDTO.Email,
-                userProfileDTO.CPF,
+                userProfileDTO.Name!,
+                userProfileDTO.Email!,
+                userProfileDTO.CPF!,
                 userProfileDTO.Birthday,
                 hashedPassword,
                 hashedConfirmPassword);
@@ -54,7 +54,7 @@ namespace FIAP.FCG.Application.Implementations
                 Name = user.Name,
                 Email = user.Email,
                 CPF = user.Cpf,
-                Birthday = user.Birthday
+                Birthday = user.Birthday!
             };
         }
 
@@ -73,14 +73,14 @@ namespace FIAP.FCG.Application.Implementations
 
         public async Task<ValidationResult> UpdateUser(UserProfileDTO userProfileDTO)
         {
-            UserProfile user = await GetByEmail(userProfileDTO.Email);
+            UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
             if (user.IsValid())
             {
                 user.UpdateUser(
-                    userProfileDTO.Name,
-                    userProfileDTO.Email,
-                    userProfileDTO.CPF,
+                    userProfileDTO.Name!,
+                    userProfileDTO.Email!,
+                    userProfileDTO.CPF! ,
                     userProfileDTO.Birthday);
 
                 _userProfileRepository.Update(user);

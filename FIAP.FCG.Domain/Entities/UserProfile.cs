@@ -5,13 +5,13 @@ namespace FIAP.FCG.Domain.Entities
 {
     public class UserProfile : BaseEntity
     {
-        public string Name { get; private set; }
-        public string Email { get; private set; }
-        public string Cpf { get; private set; }
+        public string? Name { get; private set; }
+        public string? Email { get; private set; }
+        public string? Cpf { get; private set; }
         public DateTime Birthday { get; private set; }
-        public string Password { get; private set; }
-        public string ConfirmPassword { get; private set; }
-        public string ImageURL { get; private set; }
+        public string? Password { get; private set; }
+        public string? ConfirmPassword { get; private set; }
+        public string? ImageURL { get; private set; }
 
         protected UserProfile() { }
 

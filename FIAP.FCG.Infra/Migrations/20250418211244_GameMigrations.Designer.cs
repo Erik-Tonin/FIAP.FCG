@@ -4,6 +4,7 @@ using FIAP.FCG.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FIAP.FCG.Infra.Migrations
 {
     [DbContext(typeof(MicroServiceContext))]
-    partial class MicroServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20250418211244_GameMigrations")]
+    partial class GameMigrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,26 +48,6 @@ namespace FIAP.FCG.Infra.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Category", "dbo");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("20581836-2641-4794-8d3c-4f13bb6c9d53"),
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Ação"
-                        },
-                        new
-                        {
-                            Id = new Guid("a3ff5d49-2a58-44d4-aad6-e1c151db7aea"),
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Terror"
-                        },
-                        new
-                        {
-                            Id = new Guid("33e644e9-3be5-4490-98be-82ed04ed28a9"),
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Comedia"
-                        });
                 });
 
             modelBuilder.Entity("FIAP.FCG.Domain.Entities.Game", b =>
