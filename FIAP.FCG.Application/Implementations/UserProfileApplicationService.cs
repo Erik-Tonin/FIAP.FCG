@@ -1,6 +1,6 @@
 ﻿using FIAP.FCG.Application.Contracts.IApplicationService;
-using FIAP.FCG.Application.Contracts.IRepositories;
 using FIAP.FCG.Application.DTOs;
+using FIAP.FCG.Domain.Contracts.IRepositories;
 using FIAP.FCG.Domain.Entities;
 using FluentValidation.Results;
 using System.Text.RegularExpressions;
@@ -78,10 +78,10 @@ namespace FIAP.FCG.Application.Implementations
             if (user.IsValid())
             {
                 user.UpdateUser(
-                    user.Name,
-                    user.Email,
-                    user.Cpf,
-                    user.Birthday);
+                    userProfileDTO.Name,
+                    userProfileDTO.Email,
+                    userProfileDTO.CPF,
+                    userProfileDTO.Birthday);
 
                 _userProfileRepository.Update(user);
             }
