@@ -11,9 +11,6 @@ namespace FIAP.FCG.Infra.Repositories
         {
         }
 
-        public Task<UserProfile> GetByEmail(string email)
-        {
-            return _context.UserProfile.FirstOrDefaultAsync(x => x.Email == email);
-        }
+        public async Task<UserProfile> GetByEmail(string email) => await _context.UserProfile.FirstOrDefaultAsync(x => x.Email == email);
     }
 }
