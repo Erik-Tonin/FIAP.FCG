@@ -1,6 +1,6 @@
 ﻿using FIAP.FCG.Domain.Entities;
 
-namespace FIAP.FCG.Application.Contracts.IRepositories
+namespace FIAP.FCG.Domain.Contracts.IRepositories
 {
     public interface IUserProfileRepository : IRepositoryBase<UserProfile>
     {

@@ -1,4 +1,4 @@
-﻿namespace FIAP.FCG.Application.Contracts.IRepositories
+﻿namespace FIAP.FCG.Domain.Contracts.IRepositories
 {
     public interface IRepositoryBase<TEntity> where TEntity : class
     {

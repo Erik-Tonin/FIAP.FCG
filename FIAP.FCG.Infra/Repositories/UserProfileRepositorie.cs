@@ -1,4 +1,4 @@
-﻿using FIAP.FCG.Application.Contracts.IRepositories;
+﻿using FIAP.FCG.Domain.Contracts.IRepositories;
 using FIAP.FCG.Domain.Entities;
 using FIAP.FCG.Infra.Context;
 using Microsoft.EntityFrameworkCore;

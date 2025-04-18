@@ -8,12 +8,13 @@ namespace FIAP.FCG.Infra.EntityMappers
     {
         public void Configure(EntityTypeBuilder<UserProfile> builder)
         {
-            builder.ToTable("UserProfile", "userprofile");
+            builder.ToTable("UserProfile", "dbo");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).HasMaxLength(65).IsRequired();
             builder.Property(x => x.Email).HasMaxLength(80).IsRequired();
-            builder.Property(x => x.Password).HasMaxLength(15).IsRequired();
-            builder.Property(x => x.ConfirmPassword).HasMaxLength(15).IsRequired();
+            builder.Property(x => x.Password).HasMaxLength(100).IsRequired();
+            builder.Property(x => x.ConfirmPassword).HasMaxLength(100).IsRequired();
+            builder.Property(x => x.ImageURL).HasMaxLength(100).IsRequired(false);
         }
     }
 }

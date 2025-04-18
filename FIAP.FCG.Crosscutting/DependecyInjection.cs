@@ -1,5 +1,5 @@
 ﻿using FIAP.FCG.Application.Contracts.IApplicationService;
-using FIAP.FCG.Application.Contracts.IRepositories;
+using FIAP.FCG.Domain.Contracts.IRepositories;
 using FIAP.FCG.Application.Implementations;
 using FIAP.FCG.Infra.Context;
 using FIAP.FCG.Infra.Repositories;
@@ -13,12 +13,11 @@ namespace FIAP.FCG.Crosscutting
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            // Corrigido para adicionar apenas uma configuração do DbContext
             services.AddDbContext<MicroServiceContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("Connection"))
-                    .EnableSensitiveDataLogging();
-            });
+                options.UseSqlServer(configuration.GetConnectionString("FiapConnection")));
 
+            // Configuração de CORS
             services.AddCors(options =>
             {
                 options.AddPolicy("Total",
@@ -29,10 +28,10 @@ namespace FIAP.FCG.Crosscutting
                             .AllowAnyHeader());
             });
 
-            // ApplicationService
+            // Registro dos serviços de aplicação
             services.AddScoped<IUserProfileApplicationService, UserProfileApplicationService>();
 
-            // Repositories
+            // Registro dos repositórios
             services.AddScoped<IUserProfileRepository, UserProfileRepositorie>();
 
             return services;
