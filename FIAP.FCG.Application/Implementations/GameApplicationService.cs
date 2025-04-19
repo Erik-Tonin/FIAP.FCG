@@ -36,8 +36,7 @@ namespace FIAP.FCG.Application.Implementations
 
         public async Task<Game> GetByName(string name)
         {
-            Game game = await _gameRepository.GetByName(name);
-            return game;
+            return await _gameRepository.GetByName(name);
         }
     }
 }
