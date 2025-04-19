@@ -31,10 +31,12 @@ namespace FIAP.FCG.Crosscutting
             // Registro dos serviços de aplicação
             services.AddScoped<IUserProfileApplicationService, UserProfileApplicationService>();
             services.AddScoped<IGameApplicationService, GameApplicationService>();
+            services.AddScoped<IUserLibraryApplicationService, UserLibraryApplicationService>();
 
             // Registro dos repositórios
             services.AddScoped<IUserProfileRepository, UserProfileRepositorie>();
             services.AddScoped<IGameRepository, GameRepositorie>();
+            services.AddScoped<IUserLibraryRepository, UserLibraryRepositorie>();
 
             return services;
         }

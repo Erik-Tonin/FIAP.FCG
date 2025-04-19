@@ -13,6 +13,7 @@ namespace FIAP.FCG.Infra.Context
         public DbSet<UserProfile> UserProfile { get; set; }
         public DbSet<Game> Game { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<UserLibrary> UserLibrary { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -5,7 +5,7 @@ using FIAP.FCG.Domain.Statics;
 
 namespace FIAP.FCG.Infra.EntityMappers
 {
-    public class CategoryProfileMap : IEntityTypeConfiguration<Category>
+    public class CategoryMap : IEntityTypeConfiguration<Category>
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
