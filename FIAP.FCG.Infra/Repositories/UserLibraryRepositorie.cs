@@ -15,6 +15,14 @@ namespace FIAP.FCG.Infra.Repositories
         {
             return await _context.UserLibrary.Where(x => x.UserProfileId == userProfileId && x.GameId == gameId).FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<UserLibrary>> GetByUserProfileId(Guid userProfileId)
+        {
+            return await _context.UserLibrary
+                .Include(x => x.Game)
+                .Where(x => x.UserProfileId == userProfileId)
+                .ToListAsync();
+        }
     }
 }
 

@@ -30,6 +30,18 @@ namespace FIAP.FCG.Application.Implementations
             return CustomValidationDataResponse<UserLibrary>(userLibrary);
         }
 
+        public async Task<IEnumerable<UserLibraryDTO>> GetByUserProfileId(Guid userProfileId)
+        {
+            var library = await _userLibraryRepository.GetByUserProfileId(userProfileId);
+            return await Task.FromResult(library.Select(x => new UserLibraryDTO()
+            {
+                Id = x.Id,
+                GameId = x.GameId,
+                UserProfileId = x.UserProfileId,
+                Game = x.Game,
+            }));
+        }
+
         public async Task<UserLibrary> FindLibraryEntryForUser(Guid userProfileId, Guid gameId)
         {
             return await _userLibraryRepository.FindLibraryEntryForUser(userProfileId, gameId);
