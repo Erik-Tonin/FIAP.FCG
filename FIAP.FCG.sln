@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FIAP.FCG.Domain.Core", "FIA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FIAP.FCG.Infra", "FIAP.FCG.Infra\FIAP.FCG.Infra.csproj", "{26C6D0DC-1E93-441B-A511-46D9FA2C2DBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP.FCG.Crosscutting", "FIAP.FCG.Crosscutting\FIAP.FCG.Crosscutting.csproj", "{0C3AA14D-FD4B-4F75-9FEC-EF6E4699A3A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FIAP.FCG.Crosscutting", "FIAP.FCG.Crosscutting\FIAP.FCG.Crosscutting.csproj", "{0C3AA14D-FD4B-4F75-9FEC-EF6E4699A3A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

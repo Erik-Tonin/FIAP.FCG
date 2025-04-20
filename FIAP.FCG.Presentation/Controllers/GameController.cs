@@ -25,5 +25,26 @@ namespace FIAP.FCG.Presentation.Controllers
 
             return game;
         }
+
+        [AllowAnonymous]
+        [HttpGet("GetById")]
+        public async Task<GameDTO> GetById(Guid id)
+        {
+            return await _gameApplicationService.GetById(id);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAll")]
+        public async Task<IEnumerable<GameDTO>> GetAll()
+        {
+            return await _gameApplicationService.GetAll();
+        }
+
+        [AllowAnonymous]
+        [HttpPut("UpdateGame")]
+        public async Task<IActionResult> UpdateGame(GameDTO game)
+        {
+            return CustomResponse(await _gameApplicationService.UpdateGame(game));
+        }
     }
 }

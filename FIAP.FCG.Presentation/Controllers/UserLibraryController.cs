@@ -25,5 +25,12 @@ namespace FIAP.FCG.Presentation.Controllers
 
             return user;
         }
+
+        [AllowAnonymous]
+        [HttpGet("GetByUserProfileId")]
+        public async Task<IEnumerable<UserLibraryDTO>> GetByUserProfileId(Guid userProfileId)
+        {
+            return await _userLibraryApplicationService.GetByUserProfileId(userProfileId);
+        }
     }
 }
