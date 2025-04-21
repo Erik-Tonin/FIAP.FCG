@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  sql-server-db:
+    container_name: sql-server-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "1433:1433" 
+    environment:
+      - ACCEPT_EULA=Y            
+      - MSSQL_PID=Express       
+      - SQL_USER=fiap_user      
+      - SQL_PASSWORD=fiap_user  
+    networks:
+      - sql-network  
+
+networks:
+  sql-network:
+    driver: bridge

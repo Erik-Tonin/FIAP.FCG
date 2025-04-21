@@ -1,7 +1,17 @@
 using FIAP.FCG.Crosscutting;
+using FIAP.FCG.Domain.Entities;
+using Keycloak.Net;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<KeycloakOptions>(builder.Configuration.GetSection("Keycloak"));
+builder.Services.AddSingleton(sp =>
+{
+    var options = sp.GetRequiredService<IOptions<KeycloakOptions>>().Value;
+    var keycloakClient = new KeycloakClient(options.ServerUrl, options.ClientId);
+    return keycloakClient;
+});
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")

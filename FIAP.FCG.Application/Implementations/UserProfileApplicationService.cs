@@ -3,15 +3,24 @@ using FIAP.FCG.Application.DTOs;
 using FIAP.FCG.Domain.Contracts.IRepositories;
 using FIAP.FCG.Domain.Entities;
 using FluentValidation.Results;
+using Keycloak.Net;
+using Keycloak.Net.Models.Users;
 using System.Text.RegularExpressions;
 
 namespace FIAP.FCG.Application.Implementations
 {
     public class UserProfileApplicationService : ApplicationServiceBase, IUserProfileApplicationService
     {
+        private readonly KeycloakClient _keycloakClient;
         private readonly IUserProfileRepository _userProfileRepository;
         public UserProfileApplicationService(IUserProfileRepository userProfileRepository)
         {
+            _userProfileRepository = userProfileRepository;
+        }
+
+        public UserProfileApplicationService(KeycloakClient keycloakClient, IUserProfileRepository userProfileRepository)
+        {
+            _keycloakClient = keycloakClient;
             _userProfileRepository = userProfileRepository;
         }
 
@@ -19,13 +28,13 @@ namespace FIAP.FCG.Application.Implementations
         {
             UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
-            if (user != null)            
+            if (user != null)
                 AddValidationError("Usuário já cadastrado.", "Já existe um usuário cadastrado com o mesmo e-mail.");
-            
-            if (userProfileDTO.Password != userProfileDTO.ConfirmPassword)            
+
+            if (userProfileDTO.Password != userProfileDTO.ConfirmPassword)
                 throw new Exception("As senhas não correspondem.");
 
-            if(await PassawordIsCorret(userProfileDTO.Password) == false)
+            if (!await PassawordIsCorret(userProfileDTO.Password))
                 throw new Exception("As senhas não estão no formato correto.");
 
             string hashedPassword = PasswordHasher.HashPassword(userProfileDTO.Password);
@@ -41,8 +50,34 @@ namespace FIAP.FCG.Application.Implementations
 
             await _userProfileRepository.Add(user);
 
+            var credentials = new List<Credentials>
+            {
+                new Credentials
+                {
+                    Type = "password", 
+                    Value = userProfileDTO.Password,
+                    Temporary = false
+                }
+            };
+
+            var novoUsuario = new User
+            {
+                UserName = userProfileDTO.Email,
+                Email = userProfileDTO.Email,
+                Enabled = true,
+                FirstName = userProfileDTO.Name,
+                LastName = userProfileDTO.Name,
+                Credentials = credentials 
+            };
+
+            bool criado = await _keycloakClient.CreateUserAsync("fcg-realm", novoUsuario);
+
+            if (!criado)
+                throw new Exception("Erro ao registrar usuário no Keycloak.");
+
             return CustomValidationDataResponse<UserProfile>(user);
         }
+
 
         public async Task<UserProfileDTO> GetById(Guid id)
         {
@@ -80,7 +115,7 @@ namespace FIAP.FCG.Application.Implementations
                 user.UpdateUser(
                     userProfileDTO.Name!,
                     userProfileDTO.Email!,
-                    userProfileDTO.CPF! ,
+                    userProfileDTO.CPF!,
                     userProfileDTO.Birthday);
 
                 _userProfileRepository.Update(user);
@@ -101,9 +136,9 @@ namespace FIAP.FCG.Application.Implementations
 
             bool login = user.Login(email, hashedPassword);
 
-            if (!login)            
+            if (!login)
                 throw new Exception("Não foi possivel fazer o login");
-            
+
             return user.ValidationResult;
         }
 
@@ -115,9 +150,9 @@ namespace FIAP.FCG.Application.Implementations
         public async Task<bool> PassawordIsCorret(string passaword)
         {
             var regex = new Regex(@"^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,}$");
-            if (regex.IsMatch(passaword))            
+            if (regex.IsMatch(passaword))
                 return true;
-            
+
             return false;
         }
     }

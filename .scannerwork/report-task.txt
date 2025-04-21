@@ -1,0 +1,6 @@
+projectKey=FIAP.FCG
+serverUrl=http://localhost:9000
+serverVersion=25.4.0.105899
+dashboardUrl=http://localhost:9000/dashboard?id=FIAP.FCG
+ceTaskId=cd64d24d-38d1-4e14-bb0c-74aca92e320e
+ceTaskUrl=http://localhost:9000/api/ce/task?id=cd64d24d-38d1-4e14-bb0c-74aca92e320e
