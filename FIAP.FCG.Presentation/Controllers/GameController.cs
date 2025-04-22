@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FIAP.FCG.Presentation.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class GameController : ApiController
     {
         private readonly IGameApplicationService _gameApplicationService;
@@ -17,7 +18,7 @@ namespace FIAP.FCG.Presentation.Controllers
             _gameApplicationService = gameApplicationService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "default-roles-fiap-fcg")]
         [HttpPost("RegisterGame")]
         public async Task<ValidationResultDTO<Game>> RegisterGame([FromForm] GameDTO gameDTO)
         {
@@ -33,7 +34,7 @@ namespace FIAP.FCG.Presentation.Controllers
             return await _gameApplicationService.GetById(id);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "User")]
         [HttpGet("GetAll")]
         public async Task<IEnumerable<GameDTO>> GetAll()
         {
