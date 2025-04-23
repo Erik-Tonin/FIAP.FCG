@@ -12,5 +12,6 @@ namespace FIAP.FCG.Application.Contracts.IApplicationService
         Task<IEnumerable<UserProfileDTO>> GetAll();
         Task<ValidationResult> UpdateUser(UserProfileDTO user);
         Task<ValidationResult> Login(string email, string password);
+        Task<string> GenerateToken(string email, string password);
     }
 }

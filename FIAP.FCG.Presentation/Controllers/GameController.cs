@@ -18,7 +18,7 @@ namespace FIAP.FCG.Presentation.Controllers
             _gameApplicationService = gameApplicationService;
         }
 
-        [Authorize(Roles = "default-roles-fiap-fcg")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPost("RegisterGame")]
         public async Task<ValidationResultDTO<Game>> RegisterGame([FromForm] GameDTO gameDTO)
         {
@@ -27,21 +27,21 @@ namespace FIAP.FCG.Presentation.Controllers
             return game;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("GetById")]
         public async Task<GameDTO> GetById(Guid id)
         {
             return await _gameApplicationService.GetById(id);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("GetAll")]
         public async Task<IEnumerable<GameDTO>> GetAll()
         {
             return await _gameApplicationService.GetAll();
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "User,Admin")]
         [HttpPut("UpdateGame")]
         public async Task<IActionResult> UpdateGame(GameDTO game)
         {

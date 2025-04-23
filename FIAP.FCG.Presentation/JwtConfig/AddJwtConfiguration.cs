@@ -14,6 +14,8 @@ namespace FIAP.FCG.Presentation.JwtConfig
                 {
                     options.Authority = "http://localhost:8080/realms/fcg-realm";
                     options.Audience = "account";
+                    options.RequireHttpsMetadata = false;
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -21,9 +23,31 @@ namespace FIAP.FCG.Presentation.JwtConfig
                         ValidateLifetime = true,
                         ValidIssuer = "http://localhost:8080/realms/fcg-realm",
                         ValidAudience = "account",
-                        RoleClaimType = "roles" // Ou "realm_access.roles" dependendo de como você configurou
+                        RoleClaimType = ClaimTypes.Role
                     };
-                    options.RequireHttpsMetadata = false; // Desabilita a exigência de HTTPS
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = context =>
+                        {
+                            var identity = context.Principal.Identity as ClaimsIdentity;
+                            var realmAccessClaim = context.Principal.FindFirst("realm_access");
+
+                            if (realmAccessClaim != null)
+                            {
+                                using var doc = System.Text.Json.JsonDocument.Parse(realmAccessClaim.Value);
+                                if (doc.RootElement.TryGetProperty("roles", out var roles))
+                                {
+                                    foreach (var role in roles.EnumerateArray())
+                                    {
+                                        identity?.AddClaim(new Claim(ClaimTypes.Role, role.GetString()));
+                                    }
+                                }
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
         }
 

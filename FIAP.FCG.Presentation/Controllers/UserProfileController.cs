@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FIAP.FCG.Presentation.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class UserProfileController : ApiController
     {
         private readonly IUserProfileApplicationService _userProfileApplicationService;
@@ -26,21 +27,21 @@ namespace FIAP.FCG.Presentation.Controllers
             return user;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetById")]
         public async Task<UserProfileDTO> GetById(Guid id)
         {
             return await _userProfileApplicationService.GetById(id);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAll")]
         public async Task<IEnumerable<UserProfileDTO>> GetAll()
         {
             return await _userProfileApplicationService.GetAll();
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpPut("UpdateUser")]
         public async Task<IActionResult> UpdateUser(UserProfileDTO user)
         {
@@ -52,6 +53,13 @@ namespace FIAP.FCG.Presentation.Controllers
         public async Task<IActionResult> Login(string email, string password)
         {
             return CustomResponse(await _userProfileApplicationService.Login(email, password));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("GenerateToken")]
+        public async Task<string> GenerateToken(string email, string password)
+        {
+            return await _userProfileApplicationService.GenerateToken(email, password);
         }
     }
 }

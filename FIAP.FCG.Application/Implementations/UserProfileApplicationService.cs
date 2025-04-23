@@ -195,5 +195,32 @@ namespace FIAP.FCG.Application.Implementations
             return false;
         }
 
+        public async Task<string> GenerateToken(string email, string password)
+        {
+            var client = new HttpClient();
+
+            var parameters = new Dictionary<string, string>
+            {
+                { "client_id", "fcg-user-registration" },
+                { "grant_type", "password" },
+                { "username", email },
+                { "password", password },
+                { "client_secret", _options.ClientSecret! }
+            };
+
+            var content = new FormUrlEncodedContent(parameters);
+
+            var response = await client.PostAsync("http://localhost:8080/realms/fcg-realm/protocol/openid-connect/token", content);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Erro ao fazer login");
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            var json = System.Text.Json.JsonDocument.Parse(result);
+            var token = "Bearer " + json.RootElement.GetProperty("access_token").GetString();
+
+            return token!;
+        }
     }
 }
