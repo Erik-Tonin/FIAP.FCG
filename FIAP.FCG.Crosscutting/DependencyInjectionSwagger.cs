@@ -14,9 +14,9 @@ namespace FIAP.FCG.Crosscutting
                 {
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
-                    BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "JSON Web Token (JWT) is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object.",
+                    BearerFormat = "JWT",
+                    Description = "Enter 'Bearer' followed by your token"
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement()
@@ -33,17 +33,17 @@ namespace FIAP.FCG.Crosscutting
                         new string[] {}
                     }
                 });
-
             });
 
             return services;
         }
+
         public static void UseSwaggerConfiguration(this IApplicationBuilder app)
         {
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("../swagger/v1/swagger.json", "v-1.0.0");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "v-1.0.0");
             });
         }
     }

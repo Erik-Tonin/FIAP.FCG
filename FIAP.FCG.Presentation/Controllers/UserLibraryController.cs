@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FIAP.FCG.Presentation.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class UserLibraryController : ApiController
     {
         private readonly IUserLibraryApplicationService _userLibraryApplicationService;
@@ -17,7 +18,7 @@ namespace FIAP.FCG.Presentation.Controllers
             _userLibraryApplicationService = userLibraryApplicationService;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "User,Admin")]
         [HttpPost("AddToLibrary")]
         public async Task<ValidationResultDTO<UserLibrary>> AddToLibrary([FromForm] UserLibraryDTO userLibraryDTO)
         {
@@ -26,7 +27,7 @@ namespace FIAP.FCG.Presentation.Controllers
             return user;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("GetByUserProfileId")]
         public async Task<IEnumerable<UserLibraryDTO>> GetByUserProfileId(Guid userProfileId)
         {
