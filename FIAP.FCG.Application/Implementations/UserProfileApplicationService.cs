@@ -5,7 +5,6 @@ using FIAP.FCG.Domain.Entities;
 using FluentValidation.Results;
 using Keycloak.Net;
 using Microsoft.Extensions.Options;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -30,68 +29,33 @@ namespace FIAP.FCG.Application.Implementations
 
         public async Task<ValidationResultDTO<UserProfile>> Register(UserProfileDTO userProfileDTO)
         {
-            //UserProfile user = await GetByEmail(userProfileDTO.Email!);
+            UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
-            //if (user != null)
-            //    AddValidationError("Usuário já cadastrado.", "Já existe um usuário cadastrado com o mesmo e-mail.");
+            if (user != null)
+                AddValidationError("Usuário já cadastrado.", "Já existe um usuário cadastrado com o mesmo e-mail.");
 
-            //if (userProfileDTO.Password != userProfileDTO.ConfirmPassword)
-            //    throw new Exception("As senhas não correspondem.");
+            if (userProfileDTO.Password != userProfileDTO.ConfirmPassword)
+                throw new Exception("As senhas não correspondem.");
 
-            //if (!await PassawordIsCorret(userProfileDTO.Password))
-            //    throw new Exception("As senhas não estão no formato correto.");
+            if (!await PassawordIsCorret(userProfileDTO.Password))
+                throw new Exception("As senhas não estão no formato correto.");
 
-            //string hashedPassword = PasswordHasher.HashPassword(userProfileDTO.Password);
-            //string hashedConfirmPassword = PasswordHasher.HashPassword(userProfileDTO.ConfirmPassword);
+            string hashedPassword = PasswordHasher.HashPassword(userProfileDTO.Password);
+            string hashedConfirmPassword = PasswordHasher.HashPassword(userProfileDTO.ConfirmPassword);
 
-            //user = new UserProfile(
-            //    userProfileDTO.Name!,
-            //    userProfileDTO.Email!,
-            //    userProfileDTO.CPF!,
-            //    userProfileDTO.Birthday,
-            //    hashedPassword,
-            //    hashedConfirmPassword);
+            user = new UserProfile(
+                userProfileDTO.Name!,
+                userProfileDTO.Email!,
+                userProfileDTO.CPF!,
+                userProfileDTO.Birthday,
+                hashedPassword,
+                hashedConfirmPassword);
 
-            //await _userProfileRepository.Add(user);
-            var token = await ObterTokenAsync();
+            await _userProfileRepository.Add(user);
 
-            var client = new HttpClient();
+            await RegisterInKeyCloak(userProfileDTO);
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var novoUsuario = new
-            {
-                username = userProfileDTO.Email!,
-                email = userProfileDTO.Email!,
-                firstName = userProfileDTO.Name!,
-                lastName = userProfileDTO.Name!,
-                enabled = true,
-                emailVerified = true,
-                credentials = new[]
-                {
-                new {
-                        type = "password",
-                        value = userProfileDTO.Password,
-                        temporary = false
-                    }
-                },
-                realmRoles = new[] { "User" }
-            };
-
-            var json = JsonSerializer.Serialize(novoUsuario);
-            var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var resposta = await client.PostAsync("http://localhost:8080/admin/realms/fcg-realm/users", conteudo);
-
-            if (!resposta.IsSuccessStatusCode)
-            {
-                var erro = await resposta.Content.ReadAsStringAsync();
-                throw new Exception($"Erro ao criar usuário: {erro}");
-            }
-
-            Console.WriteLine("Usuário criado com sucesso!");
-
-            return CustomValidationDataResponse<UserProfile>(novoUsuario);
+            return CustomValidationDataResponse<UserProfile>(user);
         }
 
         public async Task<UserProfileDTO> GetById(Guid id)
@@ -221,6 +185,47 @@ namespace FIAP.FCG.Application.Implementations
             var token = "Bearer " + json.RootElement.GetProperty("access_token").GetString();
 
             return token!;
+        }
+
+        public async Task<bool> RegisterInKeyCloak(UserProfileDTO userProfileDTO)
+        {
+            var token = await ObterTokenAsync();
+
+            var client = new HttpClient();
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var novoUsuario = new
+            {
+                username = userProfileDTO.Email!,
+                email = userProfileDTO.Email!,
+                firstName = userProfileDTO.Name!,
+                lastName = userProfileDTO.Name!,
+                enabled = true,
+                emailVerified = true,
+                credentials = new[]
+                {
+                new {
+                        type = "password",
+                        value = userProfileDTO.Password,
+                        temporary = false
+                    }
+                },
+                realmRoles = new[] { "User" }
+            };
+
+            var json = JsonSerializer.Serialize(novoUsuario);
+            var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var resposta = await client.PostAsync("http://localhost:8080/admin/realms/fcg-realm/users", conteudo);
+
+            if (!resposta.IsSuccessStatusCode)
+            {
+                var erro = await resposta.Content.ReadAsStringAsync();
+                throw new Exception($"Erro ao criar usuário: {erro}");
+            }
+
+            return true;
         }
     }
 }
