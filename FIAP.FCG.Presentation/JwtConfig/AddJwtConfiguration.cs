@@ -12,32 +12,18 @@ namespace FIAP.FCG.Presentation.JwtConfig
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = "http://localhost:8080/realms/fcg-realm"; // URL do Keycloak
-                    options.Audience = "account"; // O "aud" do token
-                    options.RequireHttpsMetadata = false;
+                    options.Authority = "http://localhost:8080/realms/fcg-realm";
+                    options.Audience = "account";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidIssuer = "http://localhost:8080/realms/fcg-realm",
-                        ValidAudience = "account"
+                        ValidAudience = "account",
+                        RoleClaimType = "roles" // Ou "realm_access.roles" dependendo de como você configurou
                     };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = context =>
-                        {
-                            // Adiciona as roles do token ao usuário autenticado
-                            var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
-                            var roles = claimsIdentity?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
-
-                            // Logar as roles encontradas para depuração
-                            Log.Information("Roles found in token: {Roles}", string.Join(", ", roles));
-
-                            return Task.CompletedTask;
-                        }
-                    };
+                    options.RequireHttpsMetadata = false; // Desabilita a exigência de HTTPS
                 });
         }
 
