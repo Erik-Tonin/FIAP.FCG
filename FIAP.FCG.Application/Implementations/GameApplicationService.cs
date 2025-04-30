@@ -3,6 +3,7 @@ using FIAP.FCG.Application.DTOs;
 using FIAP.FCG.Domain.Contracts.IRepositories;
 using FIAP.FCG.Domain.Entities;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FIAP.FCG.Application.Implementations
 {
@@ -15,38 +16,57 @@ namespace FIAP.FCG.Application.Implementations
             _gameRepository = gameRepository;
         }
 
-        public async Task<ValidationResultDTO<Game>> RegisterGame(GameDTO gameDTO)
+        public async Task<ValidationResult> RegisterGame(GameDTO gameDTO)
         {
-            Game game = await GetByName(gameDTO.Name!);
+            var existingGame = await GetByName(gameDTO.Name!);
 
-            if (game != null)
+            if (existingGame != null)
+            {
                 AddValidationError("Jogo já cadastrado.", "Já existe um jogo com este nome");
+                return ValidationResult;
+            }
 
-            game = new Game(
-               gameDTO.Name!,
-               gameDTO.Category!,
-               gameDTO.Censorship!,
-               gameDTO.Price!,
-               gameDTO.DateRelease,
-               gameDTO.ImageURL);
+            var game = new Game(
+                gameDTO.Name!,
+                gameDTO.Category!,
+                gameDTO.Censorship!,
+                gameDTO.Price!,
+                gameDTO.DateRelease,
+                gameDTO.ImageURL);
+
+            if (!game.IsValid())
+                return game.ValidationResult;
 
             await _gameRepository.Add(game);
-
-            return CustomValidationDataResponse<Game>(game);
+            return game.ValidationResult;
         }
 
-        public async Task<GameDTO> GetById(Guid id)
+        public async Task<ValidationResultDTO<GameDTO>> GetById(Guid id)
         {
             Game game = await _gameRepository.GetById(id);
 
-            return new GameDTO()
+            if (game == null)
             {
-                Id = id,
-                Name = game.Name,
-                Category = game.Category,
-                Censorship = game.Censorship,
-                Price = game.Price,
-                DateRelease = game.DateRelease
+                var validation = new ValidationProblemDetails();
+                validation.Errors.Add("Game", new[] { "Não foi encontrado o jogo!." });
+
+                return new ValidationResultDTO<GameDTO>
+                {
+                    ValidationProblemDetails = validation
+                };
+            }
+
+            return new ValidationResultDTO<GameDTO>
+            {
+                Response = new GameDTO
+                {
+                    Id = game.Id,
+                    Name = game.Name,
+                    Category = game.Category,
+                    Censorship = game.Censorship,
+                    Price = game.Price,
+                    DateRelease = game.DateRelease
+                }
             };
         }
 

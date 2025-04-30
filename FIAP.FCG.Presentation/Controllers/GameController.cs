@@ -1,7 +1,6 @@
 ﻿using FIAP.FCG.Application.Contracts.IApplicationService;
 using FIAP.FCG.Application.DTOs;
 using FIAP.FCG.Application.Implementations;
-using FIAP.FCG.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,16 +19,14 @@ namespace FIAP.FCG.Presentation.Controllers
 
         [Authorize(Roles = "User,Admin")]
         [HttpPost("RegisterGame")]
-        public async Task<ValidationResultDTO<Game>> RegisterGame([FromForm] GameDTO gameDTO)
+        public async Task<IActionResult> RegisterGame([FromForm] GameDTO gameDTO)
         {
-            ValidationResultDTO<Game> game = await _gameApplicationService.RegisterGame(gameDTO);
-
-            return game;
+            return CustomResponse(await _gameApplicationService.RegisterGame(gameDTO));
         }
 
         [Authorize(Roles = "User,Admin")]
         [HttpGet("GetById")]
-        public async Task<GameDTO> GetById(Guid id)
+        public async Task<ValidationResultDTO<GameDTO>> GetById(Guid id)
         {
             return await _gameApplicationService.GetById(id);
         }

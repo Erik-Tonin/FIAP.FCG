@@ -7,8 +7,8 @@ namespace FIAP.FCG.Application.Contracts.IApplicationService
 {
     public interface IGameApplicationService
     {
-        Task<ValidationResultDTO<Game>> RegisterGame(GameDTO gameDTO);
-        Task<GameDTO> GetById(Guid id);
+        Task<ValidationResult> RegisterGame(GameDTO gameDTO);
+        Task<ValidationResultDTO<GameDTO>> GetById(Guid id);
         Task<IEnumerable<GameDTO>> GetAll();
         Task<ValidationResult> UpdateGame(GameDTO game);
     }
