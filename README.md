@@ -30,4 +30,4 @@
     SQL Server 2017+
 
   🗺️ Mapeamento de Eventos (Event Storming)
-  https://miro.com/welcomeonboard/ZmZrS3k4eXJPNkhzMFliMTJTZHEveW1TblV5Y2NGQi9rR2kxUjZZK0Vjdkx3NnI2RnVZMVZydnhzcDdKdldrWGZReHB6d3ZWMzJUTVNvMHhIbXkyaUNGKzVPSEMzbkpudGlHYzRMdWU1VEJjajZkZHVvM3hOOGJzZllpdXVGblRhWWluRVAxeXRuUUgwWDl3Mk1qRGVRPT0hdjE=?share_link_id=20749899092
+  https://miro.com/app/board/uXjVI7wCS4w=/?share_link_id=620468706775
