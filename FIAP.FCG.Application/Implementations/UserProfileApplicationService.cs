@@ -29,6 +29,9 @@ namespace FIAP.FCG.Application.Implementations
 
         public async Task<ValidationResultDTO<UserProfile>> Register(UserProfileDTO userProfileDTO)
         {
+            if(!await EmailValido(userProfileDTO.Email!))
+                AddValidationError("E-mail com má formatação.", "E-mail com má formatação.");
+
             UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
             if (user != null)
@@ -157,6 +160,15 @@ namespace FIAP.FCG.Application.Implementations
                 return true;
 
             return false;
+        }
+
+        public async Task<bool> EmailValido(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            string padraoEmail = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(email, padraoEmail, RegexOptions.IgnoreCase);
         }
 
         public async Task<string> GenerateToken(string email, string password)

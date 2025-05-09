@@ -88,6 +88,14 @@ namespace FIAP.FCG.Application.Implementations
         {
             Game game = await _gameRepository.GetById(gameDTO.Id);
 
+            var existingGame = await GetByName(gameDTO.Name!);
+
+            if(existingGame != null && existingGame.Id != gameDTO.Id)
+            {
+                AddValidationError("Já existe um jogo com este nome.", "Já existe um jogo com este nome");
+                return ValidationResult;
+            }
+
             if (game.IsValid())
             {
                 game.UpdateGame(
