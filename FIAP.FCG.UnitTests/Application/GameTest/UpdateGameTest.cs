@@ -77,8 +77,7 @@ namespace FIAP.FCG.UnitTests.Application.GameTest
                 gameDTO.Censorship,
                 gameDTO.Price,
                 gameDTO.DateRelease,
-                null
-            )
+                null)
             {
                 Id = Guid.NewGuid()
             };

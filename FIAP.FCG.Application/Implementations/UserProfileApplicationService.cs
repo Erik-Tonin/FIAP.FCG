@@ -30,7 +30,7 @@ namespace FIAP.FCG.Application.Implementations
         public async Task<ValidationResultDTO<UserProfile>> Register(UserProfileDTO userProfileDTO)
         {
             if(!await EmailValido(userProfileDTO.Email!))
-                AddValidationError("E-mail com má formatação.", "E-mail com má formatação.");
+                throw new Exception("E-mail com má formatação.");
 
             UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
@@ -56,14 +56,15 @@ namespace FIAP.FCG.Application.Implementations
 
             await _userProfileRepository.Add(user);
 
-            await RegisterInKeyCloak(userProfileDTO);
-
             return CustomValidationDataResponse<UserProfile>(user);
         }
 
         public async Task<UserProfileDTO> GetById(Guid id)
         {
             UserProfile user = await _userProfileRepository.GetById(id);
+
+            if (user == null)
+                throw new Exception("Usuário não encontrado.");
 
             return new UserProfileDTO()
             {
@@ -78,6 +79,10 @@ namespace FIAP.FCG.Application.Implementations
         public async Task<IEnumerable<UserProfileDTO>> GetAll()
         {
             var users = _userProfileRepository.GetAll();
+
+            if (users == null)
+                throw new Exception("Usuários não encontrados.");
+
             return await Task.FromResult(users.Select(x => new UserProfileDTO()
             {
                 Id = x.Id,
@@ -91,6 +96,9 @@ namespace FIAP.FCG.Application.Implementations
         public async Task<ValidationResult> UpdateUser(UserProfileDTO userProfileDTO)
         {
             UserProfile user = await GetByEmail(userProfileDTO.Email!);
+
+            if(user == null)
+                throw new Exception("Usuário não encontrado.");
 
             if (user.IsValid())
             {
