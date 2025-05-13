@@ -19,7 +19,7 @@ namespace FIAP.FCG.Application.Implementations
             UserLibrary userLibrary = await FindLibraryEntryForUser(userLibraryDTO.UserProfileId!, userLibraryDTO.GameId);
 
             if (userLibrary != null)
-                AddValidationError("Jogo já cadastrado.", "Já existe um jogo cadastrado em sua biblioteca");
+                throw new Exception("Já existe um jogo cadastrado em sua biblioteca");
 
             userLibrary = new UserLibrary(
                 userLibraryDTO.UserProfileId!,
