@@ -1,5 +1,6 @@
 using FIAP.FCG.Crosscutting;
 using FIAP.FCG.Domain.Entities;
+using FIAP.FCG.Presentation.ExceptionMiddleware;
 using FIAP.FCG.Presentation.JwtConfig;
 using Keycloak.Net;
 using Microsoft.Extensions.Options;
@@ -46,6 +47,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 
