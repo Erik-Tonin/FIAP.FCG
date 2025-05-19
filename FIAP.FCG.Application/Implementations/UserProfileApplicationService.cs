@@ -30,18 +30,18 @@ namespace FIAP.FCG.Application.Implementations
         public async Task<ValidationResultDTO<UserProfile>> Register(UserProfileDTO userProfileDTO)
         {
             if(!await EmailValido(userProfileDTO.Email!))
-                throw new Exception("E-mail com má formatação.");
+                throw new HttpStatusCodeException(400, "E-mail com má formatação.");
 
             UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
             if (user != null)
-                AddValidationError("Usuário já cadastrado.", "Já existe um usuário cadastrado com o mesmo e-mail.");
+                throw new HttpStatusCodeException(409, "Já existe um usuário cadastrado com o mesmo e-mail.");
 
             if (userProfileDTO.Password != userProfileDTO.ConfirmPassword)
-                throw new Exception("As senhas não correspondem.");
+                throw new HttpStatusCodeException(400, "As senhas não correspondem.");
 
             if (!await PassawordIsCorret(userProfileDTO.Password))
-                throw new Exception("As senhas não estão no formato correto.");
+                throw new HttpStatusCodeException(400, "A senha não está no formato correto.");
 
             string hashedPassword = PasswordHasher.HashPassword(userProfileDTO.Password);
             string hashedConfirmPassword = PasswordHasher.HashPassword(userProfileDTO.ConfirmPassword);
@@ -56,6 +56,8 @@ namespace FIAP.FCG.Application.Implementations
 
             await _userProfileRepository.Add(user);
 
+            await RegisterInKeyCloak(userProfileDTO);
+
             return CustomValidationDataResponse<UserProfile>(user);
         }
 
@@ -64,7 +66,7 @@ namespace FIAP.FCG.Application.Implementations
             UserProfile user = await _userProfileRepository.GetById(id);
 
             if (user == null)
-                throw new Exception("Usuário não encontrado.");
+                throw new HttpStatusCodeException(404, "Usuário não encontrado.");
 
             return new UserProfileDTO()
             {
@@ -81,7 +83,7 @@ namespace FIAP.FCG.Application.Implementations
             var users = _userProfileRepository.GetAll();
 
             if (users == null)
-                throw new Exception("Usuários não encontrados.");
+                throw new HttpStatusCodeException(404, "Usuário não encontrado.");
 
             return await Task.FromResult(users.Select(x => new UserProfileDTO()
             {
@@ -98,7 +100,7 @@ namespace FIAP.FCG.Application.Implementations
             UserProfile user = await GetByEmail(userProfileDTO.Email!);
 
             if(user == null)
-                throw new Exception("Usuário não encontrado.");
+                throw new HttpStatusCodeException(404, "Usuário não encontrado.");
 
             if (user.IsValid())
             {
@@ -197,7 +199,7 @@ namespace FIAP.FCG.Application.Implementations
             var response = await client.PostAsync("http://localhost:8080/realms/fcg-realm/protocol/openid-connect/token", content);
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception("Erro ao fazer login");
+                throw new HttpStatusCodeException(401, "E-mail ou senha inválidos.");
 
             var result = await response.Content.ReadAsStringAsync();
 
