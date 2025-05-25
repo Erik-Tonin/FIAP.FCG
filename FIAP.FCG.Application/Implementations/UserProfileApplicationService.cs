@@ -56,8 +56,6 @@ namespace FIAP.FCG.Application.Implementations
 
             await _userProfileRepository.Add(user);
 
-            await RegisterInKeyCloak(userProfileDTO);
-
             return CustomValidationDataResponse<UserProfile>(user);
         }
 

@@ -74,8 +74,9 @@ namespace FIAP.FCG.UnitTests.Application.UserProfileTest
             Func<Task> act = async () => await _userProfileService.GetAll();
 
             // Assert
-            await act.Should().ThrowAsync<Exception>()
-                .WithMessage("Usuários não encontrados.");
+            await act.Should().ThrowAsync<HttpStatusCodeException>()
+                .WithMessage("Usuário não encontrado.");
         }
+
     }
 }

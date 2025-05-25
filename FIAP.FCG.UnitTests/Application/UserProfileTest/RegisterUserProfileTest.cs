@@ -2,12 +2,11 @@
 using FIAP.FCG.Application.Implementations;
 using FIAP.FCG.Domain.Contracts.IRepositories;
 using FIAP.FCG.Domain.Entities;
+using FluentAssertions;
+using Keycloak.Net;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using Keycloak.Net;
-using FluentAssertions;
-using Microsoft.Extensions.Options;
-using System;
 
 namespace FIAP.FCG.UnitTests.Application.UserProfileTest
 {
@@ -41,31 +40,34 @@ namespace FIAP.FCG.UnitTests.Application.UserProfileTest
             );
         }
 
-        [Fact(DisplayName = nameof(Register_UserWithInvalidEmail_ShouldThrowException))]
+[Fact(DisplayName = nameof(Register_UserWithInvalidEmail_ShouldThrowBadRequestException))]
+[Trait("Application", "Register - Use Cases")]
+public async Task Register_UserWithInvalidEmail_ShouldThrowBadRequestException()
+{
+    // Arrange
+    var userProfileDTO = new UserProfileDTO
+    {
+        Email = "invalid-email",
+        Password = "Password123!",
+        ConfirmPassword = "Password123!",
+        Name = "Test User",
+        CPF = "12345678900",
+        Birthday = new DateTime(1990, 01, 01)
+    };
+
+    // Act
+    Func<Task> act = async () => await _userProfileService.Register(userProfileDTO);
+
+    // Assert
+    await act.Should()
+        .ThrowAsync<HttpStatusCodeException>()
+        .Where(ex => ex.StatusCode == 400 && ex.Message == "E-mail com má formatação.");
+}
+
+
+        [Fact(DisplayName = nameof(Register_UserAlreadyExists_ShouldThrowConflictException))]
         [Trait("Application", "Register - Use Cases")]
-        public async Task Register_UserWithInvalidEmail_ShouldThrowException()
-        {
-            // Arrange
-            var userProfileDTO = new UserProfileDTO
-            {
-                Email = "invalid-email",
-                Password = "Password123!",
-                ConfirmPassword = "Password123!",
-                Name = "Test User",
-                CPF = "12345678900",
-                Birthday = new DateTime(1990, 01, 01)
-            };
-
-            // Act
-            var exception = await Assert.ThrowsAsync<Exception>(async () => await _userProfileService.Register(userProfileDTO));
-
-            //Assert
-            exception.Message.Should().Contain("E-mail com má formatação.");
-        }
-
-        [Fact(DisplayName = nameof(Register_UserAlreadyExists_ShouldAddValidationError))]
-        [Trait("Application", "Register - Use Cases")]
-        public async Task Register_UserAlreadyExists_ShouldAddValidationError()
+        public async Task Register_UserAlreadyExists_ShouldThrowConflictException()
         {
             // Arrange
             var userProfileDTO = new UserProfileDTO
@@ -86,11 +88,14 @@ namespace FIAP.FCG.UnitTests.Application.UserProfileTest
                                       .ReturnsAsync(existingUser);
 
             // Act
-            var result = await _userProfileService.Register(userProfileDTO);
+            Func<Task> act = async () => await _userProfileService.Register(userProfileDTO);
 
             // Assert
-            result.Should().NotBeNull();
+            await act.Should()
+                .ThrowAsync<HttpStatusCodeException>()
+                .Where(ex => ex.StatusCode == 409 && ex.Message == "Já existe um usuário cadastrado com o mesmo e-mail.");
         }
+
 
         [Fact(DisplayName = nameof(Register_PasswordsDoNotMatch_ShouldThrowException))]
         [Trait("Application", "Register - Use Cases")]
@@ -134,8 +139,9 @@ namespace FIAP.FCG.UnitTests.Application.UserProfileTest
             var result = async () => await _userProfileService.Register(userProfileDTO);
 
             // Assert
-            await result.Should().ThrowAsync<Exception>()
-                .WithMessage("As senhas não estão no formato correto.");
+            await result.Should()
+                .ThrowAsync<HttpStatusCodeException>()
+                .WithMessage("A senha não está no formato correto.");
         }
 
         [Fact(DisplayName = nameof(Register_SuccessfulRegistration_ShouldReturnValidResult))]
@@ -167,8 +173,10 @@ namespace FIAP.FCG.UnitTests.Application.UserProfileTest
             result.ValidationProblemDetails.Should().BeNull("não deve haver erros de validação em um cadastro bem-sucedido");
             result.Response.Should().NotBeNull("o usuário deve ser retornado com sucesso");
             result.Response!.Email.Should().Be(userProfileDTO.Email);
-            result.Response!.Name.Should().Be(userProfileDTO.Name);
+            result.Response.Name.Should().Be(userProfileDTO.Name);
+
             _userProfileRepositoryMock.Verify(r => r.Add(It.IsAny<UserProfile>()), Times.Once);
+            _userProfileRepositoryMock.Verify(r => r.GetByEmail(userProfileDTO.Email), Times.Once);
         }
     }
 }
