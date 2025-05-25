@@ -8,6 +8,7 @@ namespace FIAP.FCG.Application.Contracts.IApplicationService
     public interface IUserProfileApplicationService
     {
         Task<ValidationResultDTO<UserProfile>> Register(UserProfileDTO userProfileDTO);
+        Task<bool> RegisterInKeyCloak(UserProfileDTO userProfileDTO);
         Task<UserProfileDTO> GetById(Guid id);
         Task<IEnumerable<UserProfileDTO>> GetAll();
         Task<ValidationResult> UpdateUser(UserProfileDTO user);

@@ -27,6 +27,15 @@ namespace FIAP.FCG.Presentation.Controllers
             return user;
         }
 
+        [AllowAnonymous]
+        [HttpPost("RegisterInKeyCloak")]
+        public async Task<bool> RegisterInKeyCloak([FromForm] UserProfileDTO userProfileDTO)
+        {
+            bool user = await _userProfileApplicationService.RegisterInKeyCloak(userProfileDTO);
+
+            return user;
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpGet("GetById")]
         public async Task<UserProfileDTO> GetById(Guid id)
