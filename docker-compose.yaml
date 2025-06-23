@@ -25,6 +25,20 @@ services:
     networks:
       - sql-network
 
+  api-FIAP-TESTE:
+    build:
+      context: ./FIAP.FCG.Presentation/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - "FiapConnection": "Data Source=TONIN;Initial Catalog=FIAP.FCG ;User ID= fiap_user ;Password=fiap_user; TrustServerCertificate=True;"
+
+    depends_on:
+      - sql-server-db
+    networks:
+      - sql-network
+
 networks:
   sql-network:
     driver: bridge
